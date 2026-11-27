@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SortWise — Municipal Contamination Firewall &amp; Waste Impact Studio</title>
+  <link rel="stylesheet" href="./styles.css">
+  <script type="module" src="./app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to SortWise triage workspace</a>
+
+  <header class="site-header">
+    <div class="shell header-flex">
+      <div>
+        <span class="eyebrow">Arbiter Hacks V1 · Rethinking Waste Track</span>
+        <h1>SortWise</h1>
+        <p class="subtitle">Stop wishcycling before it ruins the bin. City-specific composite splitting, hazard firewall, and EPA WARM impact measurement.</p>
+      </div>
+      <div class="city-picker-box">
+        <label for="city-select">Municipal Rulepack</label>
+        <select id="city-select"></select>
+        <p id="city-rule-summary" class="rule-summary"></p>
+      </div>
+    </div>
+  </header>
+
+  <main id="main-content" class="shell grid-layout" tabindex="-1">
+    <section class="card" aria-labelledby="triage-heading">
+      <div class="card-head">
+        <div>
+          <h2 id="triage-heading">1. Smart Contamination Triage</h2>
+            <p class="card-desc">Type or speak an item name, or scan a known barcode, to check local sorting rules and composite part splits.</p>
+        </div>
+        <div class="voice-actions">
+          <button id="btn-voice-dictate" type="button" class="btn btn-secondary" aria-pressed="false">Voice Search</button>
+          <button id="btn-speak-result" type="button" class="btn btn-ghost">Read Aloud</button>
+          <label class="inline-check"><input id="toggle-auto-speak" type="checkbox"> Auto-speak</label>
+        </div>
+      </div>
+
+      <form id="triage-form" class="search-row">
+        <label for="triage-query-input" class="sr-only">Waste item description or resin code</label>
+        <input id="triage-query-input" type="text" placeholder="Try: greasy pizza box, #5 yogurt tub, plastic bag, swollen power bank...">
+        <button type="submit" class="btn btn-primary">Check Bin</button>
+      </form>
+
+      <div class="chip-group" role="group" aria-label="Condition modifiers">
+        <span class="group-label">Condition:</span>
+        <button type="button" class="chip" data-modifier="greasy" aria-pressed="false">Greasy / Oily</button>
+        <button type="button" class="chip" data-modifier="food-residue" aria-pressed="false">Food Residue</button>
+        <button type="button" class="chip" data-modifier="rinsed" aria-pressed="false">Rinsed &amp; Empty</button>
+        <button type="button" class="chip" data-modifier="wet" aria-pressed="false">Wet</button>
+        <button type="button" class="chip" data-modifier="swollen" aria-pressed="false">Swollen / Damaged</button>
+      </div>
+
+      <div class="chip-group" role="group" aria-label="Common wishcycling triggers">
+        <span class="group-label">Quick tests:</span>
+        <button type="button" class="chip chip-preset" data-quick-query="greasy pizza box">Greasy Pizza Box</button>
+        <button type="button" class="chip chip-preset" data-quick-query="yogurt tub with foil lid">Yogurt Tub + Foil</button>
+        <button type="button" class="chip chip-preset" data-quick-query="plastic grocery bag">Plastic Bag</button>
+        <button type="button" class="chip chip-preset" data-quick-query="black plastic takeout tray">Black Takeout Tray</button>
+        <button type="button" class="chip chip-preset" data-quick-query="swollen lithium power bank">Swollen Battery</button>
+        <button type="button" class="chip chip-preset" data-quick-query="compostable PLA cup">PLA Cup (#7)</button>
+      </div>
+
+      <div class="scanner-box">
+        <div>
+          <label for="photo-scan-input">Photo / Barcode Scan (on-device Canvas + BarcodeDetector)</label>
+          <input id="photo-scan-input" type="file" accept="image/*" capture="environment" aria-describedby="scan-hint">
+          <p id="scan-hint" class="scan-hint" role="status">Or test a sample packaging barcode offline:</p>
+        </div>
+        <div class="barcode-buttons">
+          <button type="button" class="btn btn-ghost" data-sample-barcode="049000042566">Scan Soda Can</button>
+          <button type="button" class="btn btn-ghost" data-sample-barcode="012000161155">Scan PET Bottle</button>
+          <button type="button" class="btn btn-ghost" data-sample-barcode="070470003016">Scan Yogurt Tub</button>
+          <button type="button" class="btn btn-ghost" data-sample-barcode="2000001382714">Scan Power Bank</button>
+        </div>
+      </div>
+
+      <p id="sortwise-status" class="status-line" role="status">Ready. Pick a city and check any household or cafe item.</p>
+
+      <div id="triage-result" class="result-panel" aria-live="polite">
+        Enter an item, scan a sample barcode, or click a common contaminant above to inspect part-by-part sorting rules.
+      </div>
+
+      <div class="log-row">
+        <span>Log this item into the Bin Audit Ledger as observed in:</span>
+        <button id="btn-log-recycle" type="button" class="btn btn-secondary" disabled>Observed: Recycle Bin</button>
+        <button id="btn-log-compost" type="button" class="btn btn-secondary" disabled>Observed: Compost Bin</button>
+        <button id="btn-log-trash" type="button" class="btn btn-ghost" disabled>Observed: Landfill</button>
+        <button id="btn-log-dropoff" type="button" class="btn btn-ghost" disabled>Observed: Drop-off</button>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="audit-heading">
+      <div class="card-head">
+        <div>
+          <h2 id="audit-heading">2. Bin Audit &amp; Measured Impact (EPA WARM)</h2>
+          <p class="card-desc">Track real contamination rate, MRF load-rejection risk, and kg CO2e saved when wishcycling is intercepted.</p>
+        </div>
+        <div class="voice-actions">
+          <button id="btn-load-sample-audit" type="button" class="btn btn-primary">Load Sample Cafe/Dorm Audit</button>
+          <button id="btn-clear-audit" type="button" class="btn btn-ghost">Clear</button>
+        </div>
+      </div>
+
+      <div id="audit-metrics" class="metrics-grid"></div>
+
+      <div class="chart-wrap">
+        <svg id="audit-chart" viewBox="0 0 420 105" role="img" aria-label="Diversion and contamination percentage chart"></svg>
+      </div>
+
+      <div class="export-row">
+        <button id="btn-export-csv" type="button" class="btn btn-secondary">Export Audit CSV</button>
+        <button id="btn-export-json" type="button" class="btn btn-secondary">Export Audit JSON</button>
+      </div>
+
+      <div class="table-wrap" tabindex="0" role="region" aria-label="Audit ledger">
+        <table>
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Observed Bin</th>
+              <th>Correct Bin</th>
+              <th>Risk</th>
+              <th>Outcome</th>
+            </tr>
+          </thead>
+          <tbody id="audit-table-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card card-wide" aria-labelledby="rulepack-heading">
+      <h2 id="rulepack-heading">3. Bring Your Own City / Campus Rulepack (JSON)</h2>
+      <p class="card-desc">Municipalities, universities, or offices can import custom sorting rules in JSON with zero backend changes.</p>
+      <form id="custom-rulepack-form" class="rulepack-form">
+        <label for="custom-rulepack-input" class="sr-only">Custom JSON rulepack</label>
+        <textarea id="custom-rulepack-input" rows="4">{"id":"campus-zero-waste","name":"University Zero-Waste Hall","region":"Custom Campus","acceptedResins":[1,2,5],"acceptsCartons":true,"acceptsFilm":false,"acceptsBlackPlastic":false,"acceptsStyrofoam":false,"hasCompost":true,"compostAcceptsSoiledPaper":true,"bins":{"recycle":"Blue Stream Recycle","compost":"Green Organics","trash":"Gray Residual","dropoff":"Campus E-Waste & Film Hub"},"sourceNote":"Campus Sustainability Office 2026"}</textarea>
+        <button type="submit" class="btn btn-primary">Load Custom Rulepack</button>
+      </form>
+    </section>
+  </main>
+
+  <footer class="shell site-footer">
+    <p>Sorting, photo analysis, and audit storage run in your browser. Voice dictation may use your browser's speech service.</p>
+  </footer>
+</body>
+</html>
